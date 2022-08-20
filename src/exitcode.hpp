@@ -1,0 +1,11 @@
+#ifndef EXITCODE_HPP
+#define EXITCODE_HPP
+
+enum class ExitCode {
+  SUCCESS = 0,
+  WRONG_NUM_OF_ARGS,
+  FILE_OPEN_FAILED,
+  UNCAUGHT_EXEPTION,
+};
+
+#endif // EXITCODE_HPP

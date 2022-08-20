@@ -124,7 +124,7 @@ The OUCH protocol messages provided in the capture consist of the message types 
 
 | Offset in bytes | Size in bytes | Type | Description |
 | --------------- | ------------- | ---- | ----------- |
-| 0 | 2 | unsigned int | message length, excluding this field (expect 80) |
+| 0 | 2 | unsigned int | message length, excluding this field (expect 41) |
 | 2 | 1 | char | packet type - always 'S' indicating Sequenced |
 | 3 | 1 | char | **message type - always 'E' indicating Executed** |
 | 4 | 8 | unsigned int | timestamp |
@@ -138,7 +138,7 @@ The OUCH protocol messages provided in the capture consist of the message types 
 
 | Offset in bytes | Size in bytes | Type | Description |
 | --------------- | ------------- | ---- | ----------- |
-| 0 | 2 | unsigned int | message length, excluding this field (expect 80) |
+| 0 | 2 | unsigned int | message length, excluding this field (expect 29) |
 | 2 | 1 | char | packet type - always 'S' indicating Sequenced |
 | 3 | 1 | char | **message type - always 'C' indicating Canceled** |
 | 4 | 8 | unsigned int | timestamp |

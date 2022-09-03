@@ -42,7 +42,7 @@ Totals:
 
 ## Input File
 
-You are provided with the input file [OUCHLMM2.incoming.packets](/OUCHLMM2.incoming.packets), consisting of packet capture in a proprietary format. The file itself does not have a header, but consists of records - each representing a packet capture.
+You are provided with the input file [OUCHLMM2.incoming.packets](OUCHLMM2.incoming.packets), consisting of packet capture in a proprietary format. The file itself does not have a header, but consists of records - each representing a packet capture.
 
 ### Packet Capture Header
 
@@ -50,18 +50,23 @@ Each packet is framed using the following header:
 
 | Offset in bytes | Size in bytes | Type | Description |
 | --------------- | ------------- | ---- | ----------- |
-| 0 | 2 | Unsigned integer | Stream idenfitifer |
-| 2 | 4 | Unsigned integer | Packet length |
+| 0 | 2 | unsigned integer | stream idenfitifer |
+| 2 | 4 | unsigned integer | packet length (can be 0) |
 
-All integers in the packet capture header are **Big Endian**.
+All integers in the packet capture header are **big endian**.
 
 ### Packets
 
 Captured packets contain OUCH protocol message streams. Each packet contains either the full OUCH protocol message, or a partial OUCH protocol message that is completed by a subsequent packet belonging to the same stream.
 
+**Additional clarifications not part of original problem document:**
+
+- Messages can consist of 2 or more partial packets.
+- Once a partial packet begins a message for a stream, any subsequent packets for that stream must also be partial packets which continue that same message, until the message is completed.
+
 ### OUCH Protocol
 
-The OUCH protocol messages provided in the capture consist of the message types outlined below. All integer fields are **Big Endian**. Offsets are independent of the [packet capture header](#packet-capture-header).
+The OUCH protocol messages provided in the capture consist of the message types outlined below. All integer fields are **big endian**. Offsets are independent of the [packet capture header](#packet-capture-header).
 
 #### System Event Message
 

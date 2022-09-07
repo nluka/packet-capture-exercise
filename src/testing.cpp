@@ -57,8 +57,6 @@ int main() {
   // s1 partial CANCELED len=30 (final)
   // s0 partial ACCEPTED len=34 (final)
 
-  // testCase(">SSObuf-consec-partials");
-
   test::evaluate_suites();
 
   return static_cast<int>(s.fails());

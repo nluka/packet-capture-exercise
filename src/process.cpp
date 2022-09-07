@@ -1,3 +1,4 @@
+#include <array>
 #include <cinttypes>
 #include <cstdint>
 #include <cstdio>

@@ -3,9 +3,8 @@
 #include "util.hpp"
 
 #ifdef _MSC_VER
-#define MICROSOFT_COMPILER _MSC_VER 1
-#endif
-#ifdef __GNUC__
+#define MICROSOFT_COMPILER 1
+#elif __GNUC__
 #define GXX_COMPILER 1
 #endif
 
@@ -25,7 +24,7 @@ std::uint16_t util::byteswap_uint16(std::uint16_t const val) {
 }
 
 std::uint32_t util::byteswap_uint32(std::uint32_t const val) {
-  #ifdef MICROSOFT_COMPILER
+  #if MICROSOFT_COMPILER
   static_assert(sizeof(unsigned long) == sizeof(std::uint32_t));
   return _byteswap_ulong(val);
   #elif GXX_COMPILER
@@ -36,7 +35,7 @@ std::uint32_t util::byteswap_uint32(std::uint32_t const val) {
 }
 
 std::uint64_t util::byteswap_uint64(std::uint64_t const val) {
-  #ifdef MICROSOFT_COMPILER
+  #if MICROSOFT_COMPILER
   static_assert(sizeof(unsigned long long) == sizeof(std::uint64_t));
   return _byteswap_uint64(val);
   #elif GXX_COMPILER

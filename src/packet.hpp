@@ -1,7 +1,7 @@
 #ifndef PACKET_HPP
 #define PACKET_HPP
 
-#include <array>
+#include <string>
 #include <cstdint>
 
 namespace packet {
@@ -44,11 +44,11 @@ namespace packet {
         char const *m_msgLastByte;
       };
 
-      std::size_t m_chunkCount = 0;
-      std::array<Chunk, 10> m_chunks{};
+      // using basic_string for SSO
+      std::basic_string<Chunk> m_chunks{};
 
     public:
-      msg::Type m_msgType;
+      msg::Type m_msgType = msg::Type::NIL;
 
       void push_chunk(char const *msgFirstByte, char const *msgLastByte);
       std::array<char, msg::max_complete_length()> extract() const noexcept;

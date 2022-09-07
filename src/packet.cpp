@@ -1,3 +1,4 @@
+#include <array>
 #include <bit>
 #include <cstring>
 #include <exception>
@@ -72,13 +73,8 @@ void msg::Pending::push_chunk(
   char const *const msgFirstByte,
   char const *const msgLastByte
 ) {
-  if (m_chunkCount == m_chunks.size()) {
-    throw std::runtime_error("ran out of chunks");
-  }
-  auto *newElem = m_chunks.data() + m_chunkCount;
-  newElem->m_msgFirstByte = msgFirstByte;
-  newElem->m_msgLastByte = msgLastByte;
-  ++m_chunkCount;
+  Chunk newChunk{msgFirstByte, msgLastByte};
+  m_chunks.push_back(newChunk);
 }
 
 std::array<char, msg::max_complete_length()> msg::Pending::extract() const noexcept {
@@ -86,7 +82,7 @@ std::array<char, msg::max_complete_length()> msg::Pending::extract() const noexc
 
   for (
     std::size_t i = 0, pos = 0;
-    i < m_chunkCount;
+    i < m_chunks.size();
     ++i
   ) {
     auto const [msgFirstByte, msgLastByte] = m_chunks[i];
@@ -111,8 +107,7 @@ bool msg::Pending::is_complete() const {
 
   std::size_t const bytesAccumulated = [this]() {
     std::size_t sum = 0;
-    for (std::size_t i = 0; i < m_chunkCount; ++i) {
-      auto const [msgFirstByte, msgLastByte] = m_chunks[i];
+    for (auto const [msgFirstByte, msgLastByte] : m_chunks) {
       std::size_t const chunkLen = msgLastByte - msgFirstByte + 1;
       sum += chunkLen;
     }
@@ -130,5 +125,5 @@ bool msg::Pending::is_complete() const {
 
 void msg::Pending::reset() noexcept {
   m_msgType = msg::Type::NIL;
-  m_chunkCount = 0;
+  m_chunks.clear();
 }

@@ -1,0 +1,6 @@
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
+
+#define SANITY_CHECK_PACKET_TYPE_IS_SEQUENTIAL 1
+
+#endif // CONFIG_HPP

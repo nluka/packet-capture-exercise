@@ -1,44 +1,52 @@
-#include <bit>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <stdio.h>
-#include <vector>
 
-#include "exitcode.hpp"
+#include "exit.hpp"
+#include "process.hpp"
+#include "util.hpp"
 
 int main(int const argc, char const *const *const argv) {
-  if (argc != 2) {
-    std::puts("usage: <packet_capture_file>");
-    std::exit((int)ExitCode::WRONG_NUM_OF_ARGS);
+  if (argc < 2 || argc > 3) {
+    std::cerr << "usage: <packet_captures_file> [<out_file>]\n";
+    EXIT(ExitCode::WRONG_NUM_OF_ARGS);
   }
 
-  try { // top-level exception safety net
+  try {
 
-  std::vector<char> const packetCapture = [argv](){
-    char const *const fPathname = argv[1];
+    char const *const packetCapturesFilePathname = argv[1];
 
-    std::ifstream fPacketCapture(fPathname);
-    if (!fPacketCapture.is_open()) {
-      std::cerr << "fatal: failed to open file `" << fPathname << "`\n";
-      std::exit((int)ExitCode::FILE_OPEN_FAILED);
+    util::crash_if_file_not_found(packetCapturesFilePathname);
+
+    std::ifstream packetCapturesFile(
+      packetCapturesFilePathname,
+      std::ios::binary
+    );
+
+    util::crash_if_file_not_open(packetCapturesFile, packetCapturesFilePathname);
+
+    auto const packetCaptures = extract_packet_captures_from_file(
+      packetCapturesFile,
+      packetCapturesFilePathname
+    );
+
+    auto const output = process_packet_captures(packetCaptures).str();
+
+    // if <out_file> was specified, dump output there,
+    // otherwise dump output to console.
+    if (argc == 3) {
+      char const *const outFilePathname = argv[2];
+      std::ofstream outFile(outFilePathname);
+      util::crash_if_file_not_open(outFile, outFilePathname);
+      outFile << output;
+    } else {
+      std::cout << output;
     }
 
-    // extract entire file - this may not be reasonable depending on the
-    // file size, but for the sake of this exercise I will assume the file is
-    // not exceptionally large and will easily fit in memory.
-    std::size_t const fileSizeInBytes = std::filesystem::file_size(fPathname);
-    std::vector<char> vec(fileSizeInBytes);
-    fPacketCapture.read(vec.data(), fileSizeInBytes);
-
-    return vec;
-  }();
-
-  // end of top-level exception safety net
   } catch (std::exception const &err) {
     std::cerr << "fatal: " << err.what() << '\n';
-    std::exit((int)ExitCode::UNCAUGHT_EXEPTION);
+    EXIT(ExitCode::UNCAUGHT_EXCEPTION);
   }
 
-  return (int)ExitCode::SUCCESS;
+  return static_cast<int>(ExitCode::SUCCESS);
 }

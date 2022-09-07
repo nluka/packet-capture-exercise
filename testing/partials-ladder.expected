@@ -1,0 +1,21 @@
+Stream 0:
+  Accepted: 1 messages
+  System Event: 0 messages
+  Replaced: 0 messages
+  Canceled: 0 messages
+  Executed: 0 messages, 0 shares
+Stream 1:
+  Accepted: 0 messages
+  System Event: 0 messages
+  Replaced: 0 messages
+  Canceled: 1 messages
+  Executed: 0 messages, 0 shares
+Stream 2:
+  Accepted: 0 messages
+  System Event: 0 messages
+  Replaced: 1 messages
+  Canceled: 0 messages
+  Executed: 0 messages, 0 shares
+
+packets checked: 7
+packets discarded: 1

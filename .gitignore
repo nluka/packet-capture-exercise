@@ -2,3 +2,5 @@
 bin
 interm
 .vs
+*.output
+*.corrupt

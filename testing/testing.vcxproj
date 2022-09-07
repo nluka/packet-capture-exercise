@@ -18,24 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\src\main.cpp" />
-    <ClCompile Include="..\src\packet.cpp" />
-    <ClCompile Include="..\src\process.cpp" />
-    <ClCompile Include="..\src\util.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\src\config.hpp" />
-    <ClInclude Include="..\src\exit.hpp" />
-    <ClInclude Include="..\src\packet.hpp" />
-    <ClInclude Include="..\src\process.hpp" />
-    <ClInclude Include="..\src\util.hpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{0a4555b2-ea8f-4950-8def-8356b6b7dba6}</ProjectGuid>
-    <RootNamespace>packetcaptureexercise</RootNamespace>
+    <ProjectGuid>{dfd7c4f5-6eb0-4aa8-8d99-23934c8d7184}</ProjectGuid>
+    <RootNamespace>testing</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -87,25 +74,25 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>.\bin\</OutDir>
     <IntDir>.\interm\</IntDir>
-    <TargetName>packets</TargetName>
+    <TargetName>testing</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>.\bin\</OutDir>
     <IntDir>.\interm\</IntDir>
-    <TargetName>packets</TargetName>
+    <TargetName>testing</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>.\bin\</OutDir>
     <IntDir>.\interm\</IntDir>
-    <TargetName>packets</TargetName>
+    <TargetName>testing</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>.\bin\</OutDir>
     <IntDir>.\interm\</IntDir>
-    <TargetName>packets</TargetName>
+    <TargetName>testing</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -175,6 +162,19 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\config.hpp" />
+    <ClInclude Include="..\src\exit.hpp" />
+    <ClInclude Include="..\src\packet.hpp" />
+    <ClInclude Include="..\src\test.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\packet.cpp" />
+    <ClCompile Include="..\src\process.cpp" />
+    <ClCompile Include="..\src\test.cpp" />
+    <ClCompile Include="..\src\testing.cpp" />
+    <ClCompile Include="..\src\util.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

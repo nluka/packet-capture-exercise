@@ -1,0 +1,15 @@
+Stream 0:
+  Accepted: 1 messages
+  System Event: 1 messages
+  Replaced: 0 messages
+  Canceled: 0 messages
+  Executed: 1 messages, 100 shares
+Stream 65535:
+  Accepted: 0 messages
+  System Event: 0 messages
+  Replaced: 1 messages
+  Canceled: 1 messages
+  Executed: 0 messages, 0 shares
+
+packets checked: 5
+packets discarded: 0

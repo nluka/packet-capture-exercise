@@ -68,23 +68,13 @@ Captured packets contain OUCH protocol message streams. Each packet contains eit
 
 The OUCH protocol messages provided in the capture consist of the message types outlined below. All integer fields are **big endian**. Offsets are independent of the [packet capture header](#packet-capture-header).
 
-#### System Event Message
-
-| Offset in bytes | Size in bytes | Type | Description |
-| --------------- | ------------- | ---- | ----------- |
-| 0 | 2 | unsigned integer | message length, excluding this field (expect 11) |
-| 2 | 1 | char | packet type - always 'S' indicating Sequenced |
-| 3 | 1 | char | **message type - always 'S' indicating System Event** |
-| 4 | 8 | unsigned integer | timestamp |
-| 12 | 1 | char | event enumeration |
-
 #### Accepted Message
 
 | Offset in bytes | Size in bytes | Type | Description |
 | --------------- | ------------- | ---- | ----------- |
-| 0 | 2 | unsigned int | message length, excluding this field (expect 66) |
+| 0 | 2 | unsigned int | message length, excluding this field (expect 66, 0x42) |
 | 2 | 1 | char | packet type - always 'S' indicating Sequenced |
-| 3 | 1 | char | **message type - always 'A' indicating Accepted** |
+| 3 | 1 | char | **message type - always 'A' (65, 0x41) indicating Accepted** |
 | 4 | 8 | unsigned int | timestamp |
 | 12 | 14 | text | order token |
 | 26 | 1 | char | side |
@@ -101,13 +91,39 @@ The OUCH protocol messages provided in the capture consist of the message types 
 | 66 | 1 | char | cross type |
 | 67 | 1 | char | order state |
 
+#### Canceled Message
+
+| Offset in bytes | Size in bytes | Type | Description |
+| --------------- | ------------- | ---- | ----------- |
+| 0 | 2 | unsigned int | message length, excluding this field (expect 29, 0x1D) |
+| 2 | 1 | char | packet type - always 'S' indicating Sequenced |
+| 3 | 1 | char | **message type - always 'C' (67, 0x43) indicating Canceled** |
+| 4 | 8 | unsigned int | timestamp |
+| 12 | 14 | text | order token |
+| 26 | 4 | unsigned int | decrement shares |
+| 30 | 1 | char | reason |
+
+#### Executed Message
+
+| Offset in bytes | Size in bytes | Type | Description |
+| --------------- | ------------- | ---- | ----------- |
+| 0 | 2 | unsigned int | message length, excluding this field (expect 41, 0x29) |
+| 2 | 1 | char | packet type - always 'S' indicating Sequenced |
+| 3 | 1 | char | **message type - always 'E' (69, 0x45) indicating Executed** |
+| 4 | 8 | unsigned int | timestamp |
+| 12 | 14 | text | order token |
+| 26 | 4 | unsigned int | executed shares |
+| 30 | 4 | unsigned int | executed price (x 10,000) |
+| 34 | 1 | char | liquidity flag |
+| 35 | 8 | unsigned int | match number |
+
 #### Replaced Message
 
 | Offset in bytes | Size in bytes | Type | Description |
 | --------------- | ------------- | ---- | ----------- |
-| 0 | 2 | unsigned int | message length, excluding this field (expect 80) |
+| 0 | 2 | unsigned int | message length, excluding this field (expect 80, 0x50) |
 | 2 | 1 | char | packet type - always 'S' indicating Sequenced |
-| 3 | 1 | char | **message type - always 'R' indicating Replaced** |
+| 3 | 1 | char | **message type - always 'R' (82, 0x52) indicating Replaced** |
 | 4 | 8 | unsigned int | timestamp |
 | 12 | 14 | text | order token |
 | 26 | 1 | char | side |
@@ -125,28 +141,12 @@ The OUCH protocol messages provided in the capture consist of the message types 
 | 67 | 1 | char | order state |
 | 68 | 14 | text | previous order token |
 
-#### Executed Message
+#### System Event Message
 
 | Offset in bytes | Size in bytes | Type | Description |
 | --------------- | ------------- | ---- | ----------- |
-| 0 | 2 | unsigned int | message length, excluding this field (expect 41) |
+| 0 | 2 | unsigned integer | message length, excluding this field (expect 11, 0x0B) |
 | 2 | 1 | char | packet type - always 'S' indicating Sequenced |
-| 3 | 1 | char | **message type - always 'E' indicating Executed** |
-| 4 | 8 | unsigned int | timestamp |
-| 12 | 14 | text | order token |
-| 26 | 4 | unsigned int | executed shares |
-| 30 | 4 | unsigned int | executed price (x 10,000) |
-| 34 | 1 | char | liquidity flag |
-| 35 | 8 | unsigned int | match number |
-
-#### Canceled Message
-
-| Offset in bytes | Size in bytes | Type | Description |
-| --------------- | ------------- | ---- | ----------- |
-| 0 | 2 | unsigned int | message length, excluding this field (expect 29) |
-| 2 | 1 | char | packet type - always 'S' indicating Sequenced |
-| 3 | 1 | char | **message type - always 'C' indicating Canceled** |
-| 4 | 8 | unsigned int | timestamp |
-| 12 | 14 | text | order token |
-| 26 | 4 | unsigned int | decrement shares |
-| 30 | 1 | char | reason |
+| 3 | 1 | char | **message type - always 'S' (83, 0x53) indicating System Event** |
+| 4 | 8 | unsigned integer | timestamp |
+| 12 | 1 | char | event enumeration |

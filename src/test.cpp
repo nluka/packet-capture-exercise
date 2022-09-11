@@ -3,8 +3,10 @@
 
 #include "test.hpp"
 
-using test::Suite;
+using test::Suite, std::size_t;
 
+static size_t s_numAssertionsPassed = 0;
+static size_t s_numAssertionsFailed = 0;
 static std::vector<Suite> s_suites{};
 #if TEST_THREADSAFE_REGISTRATION
 static std::mutex s_suitesMutex{};
@@ -98,11 +100,12 @@ void test::evaluate_suites() {
   #endif
 
   for (auto const &s : s_suites) {
+    s_numAssertionsPassed += s.passes();
+    s_numAssertionsFailed += s.fails();
+
     auto const printHeader = [&s](std::ostream *const os){
-      size_t const
-        passes = s.passes(),
-        cases = passes + s.fails();
-      *os << s.name() << " (" << passes << '/' << cases << ")\n";
+      size_t const cases = s.passes() + s.fails();
+      *os << s.name() << " (" << s.passes() << '/' << cases << ")\n";
     };
 
     if (s_useStdout) {
@@ -116,4 +119,12 @@ void test::evaluate_suites() {
   }
 
   s_suites.clear();
+}
+
+size_t test::assertions_passed() {
+  return s_numAssertionsPassed;
+}
+
+size_t test::assertions_failed() {
+  return s_numAssertionsFailed;
 }

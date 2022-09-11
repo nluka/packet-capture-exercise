@@ -1,17 +1,17 @@
-#ifndef PROCESS_HPP
-#define PROCESS_HPP
+#ifndef PARSE_HPP
+#define PARSE_HPP
 
 #include <fstream>
 #include <sstream>
 #include <vector>
 
 std::vector<char> extract_packet_captures_from_file(
-  std::ifstream &file,
+  std::fstream &file,
   char const *filePathname
 );
 
-std::stringstream process_packet_captures(
+std::stringstream parse_packet_captures(
   std::vector<char> const &packetCaptures
 );
 
-#endif // PROCESS_HPP
+#endif // PARSE_HPP

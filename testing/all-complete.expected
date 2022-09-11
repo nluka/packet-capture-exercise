@@ -10,6 +10,11 @@ Stream 65535:
   Replaced: 1 messages
   Canceled: 1 messages
   Executed: 0 messages, 0 shares
-
-packets checked: 5
-packets discarded: 0
+Totals:
+  Accepted: 1 messages
+  System Event: 1 messages
+  Replaced: 1 messages
+  Canceled: 1 messages
+  Executed: 1 messages, 100 shares
+Packets parsed: 5
+Empty packets: 0

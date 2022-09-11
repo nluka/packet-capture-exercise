@@ -16,6 +16,11 @@ Stream 2:
   Replaced: 1 messages
   Canceled: 0 messages
   Executed: 0 messages, 0 shares
-
-packets checked: 7
-packets discarded: 1
+Totals:
+  Accepted: 1 messages
+  System Event: 0 messages
+  Replaced: 1 messages
+  Canceled: 1 messages
+  Executed: 0 messages, 0 shares
+Packets parsed: 7
+Empty packets: 1

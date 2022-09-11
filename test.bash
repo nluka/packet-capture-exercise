@@ -1,2 +1,2 @@
-valgrind --track-origins=yes --leak-check=full ./testing.elf input.packets
-valgrind --track-origins=yes --leak-check=full ./packets.elf input.packets
+valgrind --leak-check=full ./packets.elf OUCHLMM2.incoming.packets
+valgrind --leak-check=full ./testing.elf . .

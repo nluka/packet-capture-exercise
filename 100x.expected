@@ -1,0 +1,44 @@
+Stream 0:
+  Accepted: 829600 messages
+  System Event: 100 messages
+  Replaced: 0 messages
+  Canceled: 837300 messages
+  Executed: 300 messages, 65500 shares
+Stream 1:
+  Accepted: 838300 messages
+  System Event: 0 messages
+  Replaced: 100 messages
+  Canceled: 844400 messages
+  Executed: 100 messages, 25000 shares
+Stream 2:
+  Accepted: 831700 messages
+  System Event: 0 messages
+  Replaced: 0 messages
+  Canceled: 817000 messages
+  Executed: 0 messages, 0 shares
+Stream 3:
+  Accepted: 840900 messages
+  System Event: 0 messages
+  Replaced: 0 messages
+  Canceled: 844200 messages
+  Executed: 400 messages, 34600 shares
+Stream 4:
+  Accepted: 833000 messages
+  System Event: 0 messages
+  Replaced: 0 messages
+  Canceled: 813900 messages
+  Executed: 200 messages, 70000 shares
+Stream 5:
+  Accepted: 833400 messages
+  System Event: 0 messages
+  Replaced: 100 messages
+  Canceled: 834900 messages
+  Executed: 100 messages, 30000 shares
+Totals:
+  Accepted: 5006900 messages
+  System Event: 100 messages
+  Replaced: 200 messages
+  Canceled: 4991700 messages
+  Executed: 1100 messages, 225100 shares
+Packets parsed: 12502000
+Empty packets: 54900

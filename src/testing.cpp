@@ -1,63 +1,98 @@
 #include <filesystem>
+#include <fstream>
 
-#include "process.hpp"
+#include "parse.hpp"
 #include "test.hpp"
 #include "util.hpp"
 
-int main() {
-  test::set_verbose_mode(false);
-  test::set_indentation("  ");
-  test::use_stdout(true);
+int main(int const argc, char const *const *const argv) {
+  if (argc != 3) {
+    std::cerr << "usage: <fabricated_data_path> <real_data_path>\n";
+    EXIT(ExitCode::WRONG_NUM_OF_ARGS);
+  }
 
-  SETUP_SUITE("testing")
+  // configure test module:
+  {
+    using namespace test;
+    set_verbose_mode(false);
+    set_indentation("  ");
+    use_stdout(true);
+  }
 
-  auto const testCase = [&s](std::string const name) {
-    std::string const
-      inputFilePathname = name + ".packets",
-      outputFilePathname = name + ".output",
-      expectedFilePathname = name + ".expected"
-    ;
+  {
+    using namespace std;
+    SETUP_SUITE("testing")
 
-    util::crash_if_file_not_found(inputFilePathname.c_str());
-    std::ifstream inputFile(inputFilePathname, std::ios::binary);
-    util::crash_if_file_not_open(inputFile, inputFilePathname.c_str());
+    auto const testCase = [&s](string const &name) {
+      string const
+        packetFilePathname = name + ".packets",
+        outputFilePathname = name + ".output",
+        expectedFilePathname = name + ".expected"
+      ;
 
-    auto const packetCaptures = extract_packet_captures_from_file(
-      inputFile, inputFilePathname.c_str()
-    );
+      fstream packetFile = util::open_file(
+        packetFilePathname.c_str(),
+        ios_base::in | ios::binary
+      );
+      fstream outFile = util::open_file(
+        outputFilePathname.c_str(),
+        ios_base::out
+      );
+      fstream expectedFile = util::open_file(
+        expectedFilePathname.c_str(),
+        ios_base::in
+      );
+      size_t const expectedFileSize = filesystem::file_size(
+        expectedFilePathname
+      );
 
-    std::string const output = process_packet_captures(packetCaptures).str();
+      auto const packetCaptures = extract_packet_captures_from_file(
+        packetFile, packetFilePathname.c_str()
+      );
+      string const output = parse_packet_captures(packetCaptures).str();
+      outFile.write(output.c_str(), output.size());
 
-    std::ofstream outputFile(outputFilePathname);
-    util::crash_if_file_not_open(outputFile, outputFilePathname.c_str());
-    outputFile << output;
+      string expected{};
+      expected.reserve(expectedFileSize);
+      std::getline(expectedFile, expected, '\0');
+      expected.erase( // remove any \r characters
+        std::remove(expected.begin(), expected.end(), '\r'),
+        expected.end()
+      );
 
-    util::crash_if_file_not_found(expectedFilePathname.c_str());
-    auto const expectedFileSizeInBytes = std::filesystem::file_size(
-      expectedFilePathname
-    );
-    std::ifstream expectedFile(expectedFilePathname);
-    std::string expected{};
-    expected.reserve(expectedFileSizeInBytes);
-    std::getline(expectedFile, expected, '\0');
+      s.assert(name.c_str(), output == expected);
+    };
 
-    s.assert("all-complete", output == expected);
-  };
+    string const fabricatedDataPath = argv[1];
+    string const realDataPath = argv[2];
 
-  testCase("all-complete"); // scenario 1
-  testCase("2-consec-partials"); // scenario 2B + 3 (SYSTEM_EVENT)
-  testCase("3-consec-partials"); // scenario 2A + 3 (EXECUTED)
+    // scenario 1, all message types
+    testCase(fabricatedDataPath + "/all-complete");
 
-  testCase("partials-ladder"); // all scenarios
-  // s0 partial ACCEPTED len=34
-  // s1 partial CANCELED len=1
-  // s2 partial REPLACED len=81
-  // s0 empty ACCEPTED len=0
-  // s2 partial REPLACED len=1 (final)
-  // s1 partial CANCELED len=30 (final)
-  // s0 partial ACCEPTED len=34 (final)
+    // scenario 2B + 3, SYSTEM_EVENT
+    testCase(fabricatedDataPath + "/2-consec-partials");
+
+    // scenario 2A + 3, EXECUTED
+    testCase(fabricatedDataPath + "/3-consec-partials");
+
+    // all scenarios
+    testCase(fabricatedDataPath + "/partials-ladder");
+    // s0 partial ACCEPTED len=34
+    // s1 partial CANCELED len=1
+    // s2 partial REPLACED len=81
+    // s0 empty ACCEPTED len=0
+    // s2 partial REPLACED len=1 (final)
+    // s1 partial CANCELED len=30 (final)
+    // s0 partial ACCEPTED len=34 (final)
+
+    // the real deal
+    testCase(realDataPath + "/OUCHLMM2.incoming");
+
+    // the real deal, but 100 times the data
+    testCase(realDataPath + "/100x");
+  }
 
   test::evaluate_suites();
 
-  return static_cast<int>(s.fails());
+  return static_cast<int>(test::assertions_failed());
 }

@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "exit.hpp"
-#include "process.hpp"
+#include "parse.hpp"
 #include "util.hpp"
 
 int main(int const argc, char const *const *const argv) {
@@ -16,29 +16,27 @@ int main(int const argc, char const *const *const argv) {
 
     char const *const packetCapturesFilePathname = argv[1];
 
-    util::crash_if_file_not_found(packetCapturesFilePathname);
-
-    std::ifstream packetCapturesFile(
+    auto packetCapturesFile = util::open_file(
       packetCapturesFilePathname,
-      std::ios::binary
+      std::ios_base::in | std::ios::binary
     );
-
-    util::crash_if_file_not_open(packetCapturesFile, packetCapturesFilePathname);
 
     auto const packetCaptures = extract_packet_captures_from_file(
       packetCapturesFile,
       packetCapturesFilePathname
     );
 
-    auto const output = process_packet_captures(packetCaptures).str();
+    auto const output = parse_packet_captures(packetCaptures).str();
 
     // if <out_file> was specified, dump output there,
     // otherwise dump output to console.
     if (argc == 3) {
       char const *const outFilePathname = argv[2];
-      std::ofstream outFile(outFilePathname);
-      util::crash_if_file_not_open(outFile, outFilePathname);
-      outFile << output;
+      auto outFile = util::open_file(
+        outFilePathname,
+        std::ios_base::out | std::ios::binary
+      );
+      outFile.write(output.c_str(), output.size());
     } else {
       std::cout << output;
     }

@@ -3,19 +3,20 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
-#include <exception>
 #include <filesystem>
 #include <functional>
 #include <iostream>
 #include <numeric>
+#include <stdexcept>
 #include <unordered_map>
 
 #include "config.hpp"
 #include "packet.hpp"
-#include "process.hpp"
+#include "parse.hpp"
+#include "stream.hpp"
 
 std::vector<char> extract_packet_captures_from_file(
-  std::ifstream &file,
+  std::fstream &file,
   char const *const filePathname
 ) {
   auto const fileSizeInBytes = std::filesystem::file_size(filePathname);
@@ -24,21 +25,11 @@ std::vector<char> extract_packet_captures_from_file(
   return vec;
 }
 
-std::stringstream process_packet_captures(
+std::stringstream parse_packet_captures(
   std::vector<char> const &packetCaptures
 ) {
-  struct Counters {
-    std::uint32_t
-      m_acceptedMessages = 0,
-      m_canceledMessages = 0,
-      m_executedMessages = 0,
-      m_replacedMessages = 0,
-      m_systemEventMessages = 0;
-    std::uint64_t m_executedShares = 0;
-  };
-
-  std::vector<Counters> streamCounters(UINT16_MAX + 1);
-  std::vector<packet::msg::Pending> pendingStreamMsgs(UINT16_MAX + 1);
+  std::vector<stream::Counters> streamCounters(UINT16_MAX + 1);
+  std::vector<stream::PendingMsg> pendingStreamMsgs(UINT16_MAX + 1);
 
   auto const processMsg = [&packetCaptures, &streamCounters](
     std::uint16_t const streamId,
@@ -82,8 +73,9 @@ std::stringstream process_packet_captures(
 
   std::size_t
     numPacketsChecked = 0,
-    numPacketsDiscarded = 0,
-    packetSize{};
+    numEmptyPackets = 0,
+    packetSize = 0
+  ;
 
   for (
     std::size_t pos = 0;
@@ -98,7 +90,7 @@ std::stringstream process_packet_captures(
 
     if (packetLen == 0) {
       // no message data, discard this packet
-      ++numPacketsDiscarded;
+      ++numEmptyPackets;
       continue;
     }
 
@@ -110,7 +102,7 @@ std::stringstream process_packet_captures(
         A. neither message length nor type are known (packet length == 1)
         B. message length (and thus type) are known (packet length >= 2)
       3. non-first partial packet for a stream
-        -> message length (and thus type) are known because we ignore empty
+          message length (and thus type) are known because we ignore empty
           packets, as such we have at least 2 bytes to work with
 
       the main challenge is to determine which scenario we are in...
@@ -132,7 +124,7 @@ std::stringstream process_packet_captures(
 
         auto const msgSoFar = pendingStreamMsg.extract();
         std::uint16_t const msgLen = packet::read_uint16(msgSoFar.data());
-        auto const msgType = packet::msg::get_type_from_msg_len(msgLen);
+        auto const msgType = packet::msg::deduce_type_from_msg_len(msgLen);
         pendingStreamMsg.m_msgType = msgType;
       }
 
@@ -167,23 +159,17 @@ std::stringstream process_packet_captures(
 
       auto &pendingStreamMsg = pendingStreamMsgs[streamId];
       pendingStreamMsg.push_chunk(msg, msg + packetLen - 1);
-      auto const msgType = packet::msg::get_type_from_msg_len(msgLen);
+      auto const msgType = packet::msg::deduce_type_from_msg_len(msgLen);
       if (msgType == packet::msg::Type::NIL) {
         throw std::runtime_error("nil");
       }
       pendingStreamMsg.m_msgType = msgType;
-
-      if (pendingStreamMsg.is_complete()) {
-        auto const completedMsg = pendingStreamMsg.extract();
-        processMsg(streamId, pendingStreamMsg.m_msgType, completedMsg.data(), pos);
-        pendingStreamMsg.reset();
-      }
     }
   }
 
-  Counters totals{};
+  stream::Counters totals{};
   std::stringstream output{};
-  std::uint8_t allZeroes[sizeof(Counters)] { 0 };
+  std::uint8_t allZeroes[sizeof(stream::Counters)] { 0 };
 
   for (std::size_t streamId = 0; streamId <= UINT16_MAX; ++streamId) {
     auto const &counters = streamCounters[streamId];
@@ -197,7 +183,7 @@ std::stringstream process_packet_captures(
 
     bool const areAnyCountersNonZero =
     #if 1
-      std::memcmp(&counters, allZeroes, sizeof(Counters)) != 0;
+      std::memcmp(&counters, allZeroes, sizeof(stream::Counters)) != 0;
     #else
       counters.m_acceptedMessages > 0 ||
       counters.m_systemEventMessages > 0 ||
@@ -219,9 +205,16 @@ std::stringstream process_packet_captures(
     }
   }
 
-  output << '\n'
-    << "packets checked: " << numPacketsChecked << '\n'
-    << "packets discarded: " << numPacketsDiscarded << '\n';
+  output
+    << "Totals:\n"
+    << "  Accepted: " << totals.m_acceptedMessages << " messages\n"
+    << "  System Event: " << totals.m_systemEventMessages << " messages\n"
+    << "  Replaced: " << totals.m_replacedMessages << " messages\n"
+    << "  Canceled: " << totals.m_canceledMessages << " messages\n"
+    << "  Executed: " << totals.m_executedMessages << " messages, "
+      << totals.m_executedShares << " shares\n"
+    << "Packets parsed: " << numPacketsChecked << '\n'
+    << "Empty packets: " << numEmptyPackets << '\n';
 
   return output;
 }

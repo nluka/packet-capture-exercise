@@ -1,3 +1,10 @@
+#include <cstdint>
+#include <filesystem>
+#include <iostream>
+#include <string>
+#include <vector>
+
+#include "exit.hpp"
 #include "util.hpp"
 
 #ifdef _MSC_VER
@@ -10,7 +17,7 @@
 #include <cstdlib>
 #endif
 
-using std::uint16_t, std::uint32_t, std::uint64_t;
+using namespace std;
 
 uint16_t util::byteswap_uint16(uint16_t const val) {
   #if MICROSOFT_COMPILER
@@ -34,20 +41,7 @@ uint32_t util::byteswap_uint32(uint32_t const val) {
   #endif
 }
 
-uint64_t util::byteswap_uint64(uint64_t const val) {
-  #if MICROSOFT_COMPILER
-    static_assert(sizeof(unsigned long long) == sizeof(uint64_t));
-    return _byteswap_uint64(val);
-  #elif GXX_COMPILER
-    return __builtin_bswap64(val);
-  #else
-    #error "unsupported compiler"
-  #endif
-}
-
-std::fstream util::open_file(char const *const pathname, int const flags) {
-  using namespace std;
-
+fstream util::open_file(char const *const pathname, int const flags) {
   bool const forReading = (flags & 1) == 1;
   if (forReading) {
     if (!filesystem::exists(pathname)) {
@@ -69,4 +63,30 @@ std::fstream util::open_file(char const *const pathname, int const flags) {
   }
 
   return file;
+}
+
+vector<char> util::extract_bin_file_contents(char const *const pathname) {
+  fstream file = util::open_file(pathname, ios::binary | ios::in);
+  auto const fileSize = filesystem::file_size(pathname);
+  vector<char> vec(fileSize);
+  file.read(vec.data(), fileSize);
+  return vec;
+}
+
+string util::extract_txt_file_contents(char const *const pathname) {
+  fstream file = util::open_file(pathname, ios::in);
+  auto const fileSize = filesystem::file_size(pathname);
+
+  string content{};
+  content.reserve(fileSize);
+
+  getline(file, content, '\0');
+
+  // remove any \r characters
+  content.erase(
+    remove(content.begin(), content.end(), '\r'),
+    content.end()
+  );
+
+  return content;
 }

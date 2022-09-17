@@ -40,5 +40,5 @@ Totals:
   Replaced: 200 messages
   Canceled: 4991700 messages
   Executed: 1100 messages, 225100 shares
-Packets parsed: 12502000
-Empty packets: 54900
+Num packets decoded: 12502000
+Num empty packets: 54900

@@ -123,7 +123,7 @@ The OUCH protocol messages provided in the capture consist of the message types 
 | --------------- | ------------- | ---- | ----------- |
 | 0 | 2 | unsigned int | message length, excluding this field (expect 80, 0x50) |
 | 2 | 1 | char | packet type - always 'S' indicating Sequenced |
-| 3 | 1 | char | **message type - always 'R' (82, 0x52) indicating Replaced** |
+| 3 | 1 | char | **message type - always 'U' (85, 0x55) indicating Replaced** |
 | 4 | 8 | unsigned int | timestamp |
 | 12 | 14 | text | order token |
 | 26 | 1 | char | side |

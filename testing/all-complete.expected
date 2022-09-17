@@ -16,5 +16,5 @@ Totals:
   Replaced: 1 messages
   Canceled: 1 messages
   Executed: 1 messages, 100 shares
-Packets parsed: 5
-Empty packets: 0
+Num packets decoded: 5
+Num empty packets: 0

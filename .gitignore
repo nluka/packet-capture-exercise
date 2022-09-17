@@ -5,3 +5,4 @@ interm
 *.output
 *.corrupt
 100x.packets
+1000x.packets

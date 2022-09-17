@@ -1,5 +1,5 @@
-#ifndef PARSE_HPP
-#define PARSE_HPP
+#ifndef DECODE_HPP
+#define DECODE_HPP
 
 #include <sstream>
 #include <vector>
@@ -8,4 +8,4 @@ std::stringstream decode_packet_captures(
   std::vector<char> const &packetCaptures
 );
 
-#endif // PARSE_HPP
+#endif // DECODE_HPP

@@ -24,7 +24,7 @@ int main(int const argc, char const *const *const argv) {
     SETUP_SUITE("testing")
 
     auto const testCase = [&s](string const &name) {
-      auto const packetCaptures =
+      vector<char> const packetCaptures =
         util::extract_bin_file_contents((name + ".packets").c_str());
 
       string const output = decode_packet_captures(packetCaptures).str();
@@ -62,10 +62,10 @@ int main(int const argc, char const *const *const argv) {
     // s0 partial SYSTEM_EVENT len=10 (end msg)
 
     testCase(fabricatedDataPath + "/1stream-2msgs-4partials");
-    // s0 partial SYSTEM_EVENT len=7  (start msg A)
-    // s0 partial SYSTEM_EVENT len=6  (end msg A)
+    // s0 partial SYSTEM_EVENT len=7 (start msg A)
+    // s0 partial SYSTEM_EVENT len=6 (end msg A)
     // s0 partial SYSTEM_EVENT len=10 (start msg B)
-    // s0 partial SYSTEM_EVENT len=3  (end msg B)
+    // s0 partial SYSTEM_EVENT len=3 (end msg B)
 
     testCase(fabricatedDataPath + "/msg-end-and-start-in-partial");
     // s0 partial SYSTEM_EVENT len=10 (start msg A)

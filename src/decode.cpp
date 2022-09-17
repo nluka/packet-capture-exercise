@@ -13,7 +13,6 @@ using namespace std;
 template <typename Ty, Ty (*big_to_little_endian_converter)(Ty)>
 Ty read_packet_bytes(char const *const src) {
   Ty val;
-
   memcpy(&val, src, sizeof(val));
 
   if constexpr (endian::native == endian::little) {
@@ -53,7 +52,6 @@ stringstream decode_packet_captures(vector<char> const &packetCaptures) {
 
   vector<Counters> streamCounters(UINT16_MAX + 1);
   Counters totals{};
-  // array<vector<char>, UINT16_MAX + 1> partialBuffers{};
   vector<vector<char>> partialBuffers(UINT16_MAX + 1);
 
   auto const processMsg = [&packetCaptures, &streamCounters, &totals](
